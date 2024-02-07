@@ -15,7 +15,7 @@ public class cardGUI {
     static JLabel pic = new JLabel();
 
     public static void populateDeck(){
-        File folder = new File("/Users/andy/code/cardDraw/src/PNG-cards-1.3");
+        File folder = new File("src/PNG-cards-1.3");
         File[] listOfFiles = folder.listFiles();
 
         for(File file: listOfFiles){
@@ -24,23 +24,24 @@ public class cardGUI {
             }
         }
     }
-    private static void updateImage(JLabel name)
+    private static JLabel updateImage(Image name)
     {
         Image image = null;
         Image scaledImage = null;
-        JLabel tempImage;
+
 
         image = name;
 
         // getScaledImage returns an Image that's been resized proportionally to my thumbnail constraints
         scaledImage = image.getScaledInstance(120, 120, Image.SCALE_SMOOTH);
 
-        pic = new JLabel(new ImageIcon(scaledImage));
+        return new JLabel(new ImageIcon(scaledImage));
     }
 
     private static class hitListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
+
 
                 int rand = (int)(Math.random() * deck.size()); // 0 - 51
                 File obj = deck.remove(rand);
@@ -55,10 +56,15 @@ public class cardGUI {
                 ImageIcon imageIcon = new ImageIcon(myPicture);
                 Image image = imageIcon.getImage();
                 Image newing = image.getScaledInstance(120, 120, Image.SCALE_SMOOTH);
-                JLabel pic = new JLabel(new ImageIcon(newing));
+                ImageIcon toDisplay = new ImageIcon(newing);
 
-                updateImage(pic);
-                cardDisplay.add(pic);
+                pic = new JLabel(toDisplay);
+//                JLabel toDisplay = updateImage(newing);
+//
+//                cardDisplay.remove(toDisplay);
+//
+//
+//                cardDisplay.add(toDisplay);
 
                 cardDisplay.repaint();
                 cardDisplay.revalidate();
@@ -79,6 +85,7 @@ public class cardGUI {
         buttonGrid.add(hit);
 
         cardDisplay.setLayout(new FlowLayout());
+        cardDisplay.add(pic);
 
         window.add(buttonGrid);
         window.add(cardDisplay);
