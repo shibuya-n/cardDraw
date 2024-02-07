@@ -10,8 +10,12 @@ public class cardGUI {
     static JButton hit = new JButton("HIT");
     static ArrayList<File> deck = new ArrayList(); // 52 cards
 
+    static JPanel cardDisplay = new JPanel();
+
+    static JLabel pic = new JLabel();
+
     public static void populateDeck(){
-        File folder = new File("PNG-cards-1.3");
+        File folder = new File("/Users/andy/code/cardDraw/src/PNG-cards-1.3");
         File[] listOfFiles = folder.listFiles();
 
         for(File file: listOfFiles){
@@ -20,11 +24,25 @@ public class cardGUI {
             }
         }
     }
+    private static void updateImage(JLabel name)
+    {
+        Image image = null;
+        Image scaledImage = null;
+        JLabel tempImage;
+
+        image = name;
+
+        // getScaledImage returns an Image that's been resized proportionally to my thumbnail constraints
+        scaledImage = image.getScaledInstance(120, 120, Image.SCALE_SMOOTH);
+
+        pic = new JLabel(new ImageIcon(scaledImage));
+    }
 
     private static class hitListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
-                int rand = (int)(Math.random() * deck.size()); // 0 - 52
+
+                int rand = (int)(Math.random() * deck.size()); // 0 - 51
                 File obj = deck.remove(rand);
 
                 BufferedImage myPicture = null;
@@ -37,7 +55,13 @@ public class cardGUI {
                 ImageIcon imageIcon = new ImageIcon(myPicture);
                 Image image = imageIcon.getImage();
                 Image newing = image.getScaledInstance(120, 120, Image.SCALE_SMOOTH);
-                JLabel picLabel = new JLabel(new ImageIcon(newing));
+                JLabel pic = new JLabel(new ImageIcon(newing));
+
+                updateImage(pic);
+                cardDisplay.add(pic);
+
+                cardDisplay.repaint();
+                cardDisplay.revalidate();
 
 
 
@@ -47,18 +71,18 @@ public class cardGUI {
     public static void main(String[] args){
         JFrame window = new JFrame("Draw Cards");
         window.setLayout(new GridLayout(2,1));
+        populateDeck();
 
         JPanel buttonGrid = new JPanel();
         buttonGrid.setLayout(new FlowLayout());
         hit.addActionListener(new hitListener());
         buttonGrid.add(hit);
 
-        JPanel cardDisplay = new JPanel();
         cardDisplay.setLayout(new FlowLayout());
 
         window.add(buttonGrid);
         window.add(cardDisplay);
-        window.setBounds(500,500, 750 , 500);
+        window.setBounds(500,500, 750 , 750);
         window.setVisible(true);
     }
 }
