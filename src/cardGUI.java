@@ -10,9 +10,9 @@ public class cardGUI {
     static JButton hit = new JButton("HIT");
     static ArrayList<File> deck = new ArrayList(); // 52 cards
 
+    // keeps track of drawn cards (in order to remove at each draw)
+    static ArrayList<JLabel> cardsDrawn = new ArrayList<>();
     static JPanel cardDisplay = new JPanel();
-
-    static JLabel pic = new JLabel();
 
     public static void populateDeck(){
         File folder = new File("src/PNG-cards-1.3");
@@ -24,50 +24,40 @@ public class cardGUI {
             }
         }
     }
-    private static JLabel updateImage(Image name)
-    {
-        Image image = null;
-        Image scaledImage = null;
 
-
-        image = name;
-
-        // getScaledImage returns an Image that's been resized proportionally to my thumbnail constraints
-        scaledImage = image.getScaledInstance(120, 120, Image.SCALE_SMOOTH);
-
-        return new JLabel(new ImageIcon(scaledImage));
-    }
 
     private static class hitListener implements ActionListener{
+
+        BufferedImage picToPrint = null;
         @Override
         public void actionPerformed(ActionEvent e) {
 
-
+                //Remove any previously drawn cards
+                if(cardsDrawn.size() > 0){
+                    cardDisplay.remove(cardsDrawn.remove(0));
+                }
                 int rand = (int)(Math.random() * deck.size()); // 0 - 51
-                File obj = deck.remove(rand);
+                deck.remove(rand);
 
-                BufferedImage myPicture = null;
                 try {
-                    myPicture = ImageIO.read(obj);
+                    picToPrint = ImageIO.read(deck.get(rand));
                 }
                 catch (java.io.IOException ioe){
                     ioe.printStackTrace();
                 }
-                ImageIcon imageIcon = new ImageIcon(myPicture);
+
+                ImageIcon imageIcon = new ImageIcon(picToPrint);
                 Image image = imageIcon.getImage();
-                Image newing = image.getScaledInstance(120, 120, Image.SCALE_SMOOTH);
-                ImageIcon toDisplay = new ImageIcon(newing);
+                Image newPic = image.getScaledInstance(150, 200, Image.SCALE_SMOOTH);
+                JLabel pic = new JLabel(new ImageIcon(newPic));
+                cardDisplay.add(pic);
 
-                pic = new JLabel(toDisplay);
-//                JLabel toDisplay = updateImage(newing);
-//
-//                cardDisplay.remove(toDisplay);
-//
-//
-//                cardDisplay.add(toDisplay);
+                // adds JLabel to an ArrayList to keep reference to
+                cardsDrawn.add(pic);
 
-                cardDisplay.repaint();
                 cardDisplay.revalidate();
+                cardDisplay.repaint();
+
 
 
 
@@ -85,7 +75,7 @@ public class cardGUI {
         buttonGrid.add(hit);
 
         cardDisplay.setLayout(new FlowLayout());
-        cardDisplay.add(pic);
+
 
         window.add(buttonGrid);
         window.add(cardDisplay);
